@@ -13,4 +13,4 @@ logging:
 file:
   storage:
     windows-path: D:/home/images/
-    linux-path: /app/images/
+    linux-path: /var/tmp/images/
