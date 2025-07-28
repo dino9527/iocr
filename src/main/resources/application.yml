@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: iocr
+
+server:
+  port: 8899
+
+logging:
+  level:
+    io.github.mymonstercat.*: debug
+    org.dino.iocr.*: info
+
+file:
+  storage:
+    windows-path: D:/home/images/
+    linux-path: /app/images/
