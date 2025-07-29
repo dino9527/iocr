@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.dino.iocr.config.OcrConfig.ENGINE;
+import static org.dino.iocr.config.OcrConfig.INFERENCE_ENGINE;
 import static org.dino.iocr.config.OcrConfig.PARAM_CONFIG;
 
 /**
@@ -36,7 +36,7 @@ public class IdCardOcrService {
      */
     public Map<String, String> idCardFront(MultipartFile file) {
         String path = uploadFile(file);
-        OcrResult ocrResult = ENGINE.runOcr(path, PARAM_CONFIG);
+        OcrResult ocrResult = INFERENCE_ENGINE.runOcr(path, PARAM_CONFIG);
         ArrayList<TextBlock> textBlocks = ocrResult.getTextBlocks();
         String cardNumber = IdCardOcrUtils.cardNumber(textBlocks);
         Map<String, String> userInfoMap = new HashMap<>();

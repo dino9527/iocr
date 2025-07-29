@@ -14,3 +14,9 @@ file:
   storage:
     windows-path: D:/home/images/
     linux-path: /var/tmp/images/
+
+inference:
+  engine:
+    hardware:
+      cpu: 8
+      gpu: -1
