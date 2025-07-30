@@ -10,6 +10,6 @@ VOLUME /var/tmp/images
 WORKDIR /app
 
 COPY ./target/iocr-0.0.1-SNAPSHOT.jar /app/iocr-0.0.1-SNAPSHOT.jar
-EXPOSE 6010
+EXPOSE 8899
 ENV JAVA_OPTS "-Xms4096m -Xmx8192m"
 CMD java $JAVA_OPTS -jar /app/iocr-0.0.1-SNAPSHOT.jar
