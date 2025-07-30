@@ -17,6 +17,6 @@ file:
 
 inference:
   engine:
-    hardware:
-      cpu: 8
-      gpu: -1
+    model: ONNX_PPOCR_V4
+    num-threads: 8
+    gpu: -1

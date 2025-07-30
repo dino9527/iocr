@@ -2,6 +2,8 @@ package org.dino.iocr.service;
 
 import com.benjaminwan.ocrlibrary.OcrResult;
 import com.benjaminwan.ocrlibrary.TextBlock;
+import io.github.mymonstercat.ocr.InferenceEngine;
+import io.github.mymonstercat.ocr.config.ParamConfig;
 import org.dino.iocr.config.properties.FileStoragePathBean;
 import org.dino.iocr.utils.IdCardOcrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
-import static org.dino.iocr.config.OcrConfig.INFERENCE_ENGINE;
-import static org.dino.iocr.config.OcrConfig.PARAM_CONFIG;
 
 /**
  * 身份证 OCR 服务类
@@ -26,6 +25,10 @@ public class IdCardOcrService {
 
     @Autowired
     private FileStoragePathBean fileStoragePathBean;
+    @Autowired
+    private InferenceEngine inferenceEngine;
+    @Autowired
+    private ParamConfig paramConfig;
     public final static String OS_NAME = System.getProperty("os.name");
 
     /**
@@ -36,7 +39,7 @@ public class IdCardOcrService {
      */
     public Map<String, String> idCardFront(MultipartFile file) {
         String path = uploadFile(file);
-        OcrResult ocrResult = INFERENCE_ENGINE.runOcr(path, PARAM_CONFIG);
+        OcrResult ocrResult = inferenceEngine.runOcr(path, paramConfig);
         ArrayList<TextBlock> textBlocks = ocrResult.getTextBlocks();
         String cardNumber = IdCardOcrUtils.cardNumber(textBlocks);
         Map<String, String> userInfoMap = new HashMap<>();
