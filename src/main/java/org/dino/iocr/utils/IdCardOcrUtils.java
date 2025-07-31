@@ -3,6 +3,7 @@ package org.dino.iocr.utils;
 import com.benjaminwan.ocrlibrary.TextBlock;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,10 +24,10 @@ public class IdCardOcrUtils {
      * @param textBlocks 识别的结果集合
      * @return 姓名
      */
-    public static String predictName(ArrayList<TextBlock> textBlocks) {
+    public static String predictName(List<String> textBlocks) {
         String name = "";
-        for (TextBlock textBlock: textBlocks) {
-            String str = textBlock.getText().trim().replace(" ", "");
+        for (String textBlock: textBlocks) {
+            String str = textBlock.trim().replace(" ", "");
             if (str.contains("姓名") || str.contains("名")) {
                 String pattern = ".*名[\\u4e00-\\u9fa5]{1,4}";
                 Pattern r = Pattern.compile(pattern);
@@ -45,10 +46,9 @@ public class IdCardOcrUtils {
      * @param textBlocks 识别的结果集合
      * @return 民族信息
      */
-    public static String national(ArrayList<TextBlock> textBlocks) {
+    public static String national(List<String> textBlocks) {
         String nation = "";
-        for (TextBlock textBlock: textBlocks) {
-            String str = textBlock.getText();
+        for (String str: textBlocks) {
             String pattern = ".*民族[\u4e00-\u9fa5]{1,4}";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(str);
@@ -65,7 +65,7 @@ public class IdCardOcrUtils {
      * @param textBlocks 识别的结果集合
      * @return 身份证地址信息
      */
-    public static String address(ArrayList<TextBlock> textBlocks) {
+    public static String address(List<String> textBlocks) {
         String address = "";
         StringBuilder addressJoin = getAddressJoin(textBlocks);
         String s = addressJoin.toString();
@@ -80,10 +80,10 @@ public class IdCardOcrUtils {
         return address;
     }
 
-    private static StringBuilder getAddressJoin(ArrayList<TextBlock> textBlocks) {
+    private static StringBuilder getAddressJoin(List<String> textBlocks) {
         StringBuilder addressJoin = new StringBuilder();
-        for (TextBlock textBlock: textBlocks) {
-            String str = textBlock.getText().trim().replace(" ", "");
+        for (String textBlock: textBlocks) {
+            String str = textBlock.trim().replace(" ", "");
             // 看身份证地址那一栏，具体可以看一下自己的身份证，几乎都包含这些字，具体可以自己debugger看一下就知道了
             // 具体可以自己debugger看一下就知道了
             if (str.contains("住址") || str.contains("址") || str.contains("省") || str.contains("市")
@@ -103,10 +103,10 @@ public class IdCardOcrUtils {
      * @param textBlocks ocr识别的内容列表
      * @return 身份证号码
      */
-    public static String cardNumber(ArrayList<TextBlock> textBlocks) {
+    public static String cardNumber(List<String> textBlocks) {
         String cardNumber = "";
-        for (TextBlock textBlock: textBlocks) {
-            String str = textBlock.getText().trim().replace(" ", "");
+        for (String textBlock: textBlocks) {
+            String str = textBlock.trim().replace(" ", "");
             // 之里注意了，这里的双斜杆，是因为这里是java，\会转义，所以使用双鞋干\\，去掉试一试就知道了
             String pattern = "\\d{17}[\\d|x|X]|\\d{15}";
             Pattern r = Pattern.compile(pattern);

@@ -46,3 +46,5 @@ mvn clean package -P linux-x86_64 -Dlinux-build
 - [RapidOCR](https://github.com/RapidAI/RapidOCR)
 - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
 - [RapidOcr-Java](https://github.com/MyMonsterCat/RapidOcr-Java)
+- [RapidOCR4j](https://github.com/hzkitty/RapidOCR4j)
+

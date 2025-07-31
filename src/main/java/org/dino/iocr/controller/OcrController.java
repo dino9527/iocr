@@ -27,4 +27,10 @@ public class OcrController {
         return ResponseEntity.ok(idCardOcrService.idCardFront(file));
     }
 
+    @PostMapping("/front")
+    public ResponseEntity<Map<String, String>> front(MultipartFile file) throws Exception {
+        return ResponseEntity.ok(idCardOcrService.idCardFront(file.getBytes()));
+
+    }
+
 }

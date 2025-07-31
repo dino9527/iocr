@@ -1,5 +1,6 @@
 package org.dino.iocr.config;
 
+import io.github.hzkitty.entity.OcrConfig;
 import io.github.mymonstercat.Model;
 import io.github.mymonstercat.ocr.InferenceEngine;
 import io.github.mymonstercat.ocr.config.HardwareConfig;
@@ -20,7 +21,7 @@ import static io.github.mymonstercat.Model.ONNX_PPOCR_V3;
 @Configuration
 @ConfigurationProperties(prefix = "inference.engine")
 @Setter
-public class OcrConfig {
+public class OcrConfiguration {
     private int numThreads = 4;
     private int gpu = -1;
     private Model model = ONNX_PPOCR_V3;
@@ -45,5 +46,13 @@ public class OcrConfig {
     @Bean
     public InferenceEngine inferenceEngine() {
         return InferenceEngine.getInstance(model, new HardwareConfig(numThreads, gpu));
+    }
+
+    @Bean
+    public OcrConfig ocrConfig() {
+        OcrConfig ocrConfig = new OcrConfig();
+        ocrConfig.Global.setInterOpNumThreads(0);
+        ocrConfig.Global.setIntraOpNumThreads(0);
+        return ocrConfig;
     }
 }
