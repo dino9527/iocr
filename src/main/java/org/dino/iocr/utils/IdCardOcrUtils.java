@@ -1,8 +1,5 @@
 package org.dino.iocr.utils;
 
-import com.benjaminwan.ocrlibrary.TextBlock;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -163,7 +160,62 @@ public class IdCardOcrUtils {
         return birthday;
     }
 
+    /**
+     * 获取身份证反面信息的签发机关
+     *
+     * @param textBlocks ocr识别的内容列表
+     * @return 身份证反面的签发机关
+     */
+    public static String issuingAuthority(List<String> textBlocks) {
+        String issuingAuthority = "";
+        for (String text : textBlocks) {
+            String str = text.trim().replace(" ", "");
+            if (str.contains("公安局")) {
+                // 为什么要有这一步，是因为，有时候身份证的签发机关（这四个字）和XXX公安局，是在一起并且是同一行的，
+                // 如图片比较正的时候，识别得到的结果是：签发机关XXX公安局，
+                // 如果图片是歪的，识别到的结果，签发机关和XXX公安局不在用一行的
+                // 具体那一张稍微正一点的图片和一张歪一点的图片，debugger，这里看一下就知道了
+                if (str.contains("签发机关")) {
+                    // String为引用类型
+                    str = str.replace("签发机关", "");
+                }
+                String pattern = ".*公安局.*";
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(str);
+                if (m.matches()) {
+                    issuingAuthority = str;
+                }
+            }
+        }
+        return issuingAuthority;
+    }
 
-
+    /**
+     * 身份证反面有效期识别
+     *
+     * @param textBlocks ocr识别的内容列表
+     * @return 身份证的有效期
+     */
+    public static String validityPeriod(List<String> textBlocks) {
+        String validityPeriod = "";
+        for (String text : textBlocks) {
+            String str = text.trim().replace(" ", "");
+            // 为什么要有这一步，是因为，有时候身份证的有效期限（这四个字）和日期是在一起并且是同一行的，
+            // 如图片比较正的时候，识别得到的结果是：效期期限2016.02.01-2026.02.01
+            // 如果图片是歪的，识别到的结果，有效期限和日期不在用一行的
+            // 具体那一张稍微正一点的图片和一张歪一点的图片，debugger，这里看一下就知道了
+            if (str.contains("有效期限")) {
+                // String为引用类型
+                str = str.replace("有效期限", "");
+            }
+            String pattern = "\\d{4}(\\-|\\/|.)\\d{1,2}\\1\\d{1,2}-\\d{4}(\\-|\\/|.)\\d{1,2}\\1\\d{1,2}";
+            Pattern r = Pattern.compile(pattern);
+            Matcher m = r.matcher(str);
+            if (m.matches()) {
+                validityPeriod = str;
+            }
+        }
+        return validityPeriod;
+    }
 
 }

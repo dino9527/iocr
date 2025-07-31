@@ -1,5 +1,6 @@
 package org.dino.iocr.config;
 
+import io.github.hzkitty.RapidOCR;
 import io.github.hzkitty.entity.OcrConfig;
 import io.github.mymonstercat.Model;
 import io.github.mymonstercat.ocr.InferenceEngine;
@@ -49,10 +50,10 @@ public class OcrConfiguration {
     }
 
     @Bean
-    public OcrConfig ocrConfig() {
+    public RapidOCR rapidOCR() {
         OcrConfig ocrConfig = new OcrConfig();
         ocrConfig.Global.setInterOpNumThreads(0);
         ocrConfig.Global.setIntraOpNumThreads(0);
-        return ocrConfig;
+        return RapidOCR.create(ocrConfig);
     }
 }

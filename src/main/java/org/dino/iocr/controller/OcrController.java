@@ -22,15 +22,24 @@ public class OcrController {
     @Autowired
     private IdCardOcrService idCardOcrService;
 
-    @PostMapping("")
-    public ResponseEntity<Map<String, String>> ocr(MultipartFile file) {
+    @PostMapping("/v1/front")
+    public ResponseEntity<Map<String, String>> front(MultipartFile file) {
         return ResponseEntity.ok(idCardOcrService.idCardFront(file));
     }
 
-    @PostMapping("/front")
-    public ResponseEntity<Map<String, String>> front(MultipartFile file) throws Exception {
+    @PostMapping("/v2/front")
+    public ResponseEntity<Map<String, String>> frontV2(MultipartFile file) throws Exception {
         return ResponseEntity.ok(idCardOcrService.idCardFront(file.getBytes()));
+    }
 
+    @PostMapping("/v1/back")
+    public ResponseEntity<Map<String, String>> back(MultipartFile file) {
+        return ResponseEntity.ok(idCardOcrService.idCardBack(file));
+    }
+
+    @PostMapping("/v2/back")
+    public ResponseEntity<Map<String, String>> backV2(MultipartFile file) throws Exception {
+        return ResponseEntity.ok(idCardOcrService.idCardBack(file.getBytes()));
     }
 
 }

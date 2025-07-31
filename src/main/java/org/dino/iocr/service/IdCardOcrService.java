@@ -3,7 +3,6 @@ package org.dino.iocr.service;
 import com.benjaminwan.ocrlibrary.OcrResult;
 import com.benjaminwan.ocrlibrary.TextBlock;
 import io.github.hzkitty.RapidOCR;
-import io.github.hzkitty.entity.OcrConfig;
 import io.github.hzkitty.entity.RecResult;
 import io.github.mymonstercat.ocr.InferenceEngine;
 import io.github.mymonstercat.ocr.config.ParamConfig;
@@ -35,7 +34,7 @@ public class IdCardOcrService {
     @Autowired
     private ParamConfig paramConfig;
     @Autowired
-    private OcrConfig ocrConfig;
+    private RapidOCR rapidOCR;
     public final static String OS_NAME = System.getProperty("os.name");
 
     /**
@@ -49,7 +48,7 @@ public class IdCardOcrService {
         OcrResult ocrResult = inferenceEngine.runOcr(path, paramConfig);
         ArrayList<TextBlock> textBlocks = ocrResult.getTextBlocks();
         List<String> textList = textBlocks.stream().map(TextBlock::getText).collect(Collectors.toList());
-        return response(textList);
+        return responseFront(textList);
     }
 
     /**
@@ -60,13 +59,39 @@ public class IdCardOcrService {
      */
     @SneakyThrows
     public Map<String, String> idCardFront(byte[] bytes) {
-        RapidOCR rapidOCR = RapidOCR.create(ocrConfig);
         io.github.hzkitty.entity.OcrResult ocrResult = rapidOCR.run(bytes);
         List<String> textList = ocrResult.getRecRes().stream().map(RecResult::getText).collect(Collectors.toList());
-        return response(textList);
+        return responseFront(textList);
     }
 
-    private Map<String, String> response(List<String> textList) {
+    /**
+     * 身份证背面 OCR 处理方法
+     *
+     * @param file 身份证背面图片文件
+     * @return 处理后的身份证信息
+     */
+    public Map<String, String> idCardBack(MultipartFile file) {
+        String path = uploadFile(file);
+        OcrResult ocrResult = inferenceEngine.runOcr(path, paramConfig);
+        ArrayList<TextBlock> textBlocks = ocrResult.getTextBlocks();
+        List<String> textList = textBlocks.stream().map(TextBlock::getText).collect(Collectors.toList());
+        return responseBack(textList);
+    }
+
+    /**
+     * 身份证正面 OCR 处理方法
+     *
+     * @param bytes 身份证正面图片字节数组
+     * @return 处理后的身份证信息
+     */
+    @SneakyThrows
+    public Map<String, String> idCardBack(byte[] bytes) {
+        io.github.hzkitty.entity.OcrResult ocrResult = rapidOCR.run(bytes);
+        List<String> textList = ocrResult.getRecRes().stream().map(RecResult::getText).collect(Collectors.toList());
+        return responseBack(textList);
+    }
+
+    private Map<String, String> responseFront(List<String> textList) {
         String cardNumber = IdCardOcrUtils.cardNumber(textList);
         Map<String, String> userInfoMap = new HashMap<>();
         userInfoMap.put("name", IdCardOcrUtils.predictName(textList));
@@ -75,6 +100,13 @@ public class IdCardOcrService {
         userInfoMap.put("cardNumber", cardNumber);
         userInfoMap.put("sex", IdCardOcrUtils.sex(cardNumber));
         userInfoMap.put("birthday", IdCardOcrUtils.birthday(cardNumber));
+        return userInfoMap;
+    }
+
+    private Map<String, String> responseBack(List<String> textList) {
+        Map<String, String> userInfoMap = new HashMap<>();
+        userInfoMap.put("issuingAuthority", IdCardOcrUtils.issuingAuthority(textList));
+        userInfoMap.put("validityPeriod", IdCardOcrUtils.validityPeriod(textList));
         return userInfoMap;
     }
 
